@@ -6,4 +6,4 @@ export const PLATFORM_NAME = 'ADTPlugin';
 /**
  * This must match the name of your plugin as defined the package.json
  */
-export const PLUGIN_NAME = 'adt-homebridge-plugin';
+export const PLUGIN_NAME = 'homebridge-adt-plugin';

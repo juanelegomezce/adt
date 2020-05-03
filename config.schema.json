@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "ADTPlugin",
   "pluginType": "platform",
   "singular": true,
   "schema": {

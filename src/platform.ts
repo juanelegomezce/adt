@@ -2,14 +2,14 @@ import { APIEvent } from 'homebridge';
 import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ExamplePlatformAccessory } from './platformAccessory';
+import { ADTPlatformAccessory } from './platformAccessory';
 
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
+export class ADTHomebridgePlatform implements DynamicPlatformPlugin {
   public readonly Service = this.api.hap.Service;
   public readonly Characteristic = this.api.hap.Characteristic;
 
@@ -30,7 +30,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     this.api.on(APIEvent.DID_FINISH_LAUNCHING, () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
-      this.discoverDevices();
+      this.setupDevices();
     });
   }
 
@@ -43,7 +43,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
 
     // create the accessory handler
     // this is imported from `platformAccessory.ts`
-    new ExamplePlatformAccessory(this, accessory);
+    new ADTPlatformAccessory(this, accessory);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
     this.accessories.push(accessory);
@@ -54,37 +54,33 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
    * Accessories must only be registered once, previously created accessories
    * must not be registered again to prevent "duplicate UUID" errors.
    */
-  discoverDevices() {
+  setupDevices() {
 
     // EXAMPLE ONLY
     // A real plugin you would discover accessories from the local network, cloud services
     // or a user-defined array in the platform config.
-    const exampleDevices = [
+    /*const exampleDevices = [
       {
-        exampleUniqueId: 'ABCD',
-        exampleDisplayName: 'Bedroom',
+        exampleUniqueId: 'atdPanel',
+        exampleDisplayName: 'ADT Panel',
       },
-      {
-        exampleUniqueId: 'EFGH',
-        exampleDisplayName: 'Kitchen',
-      },
-    ];
+    ];*/
 
-    // loop over the discovered devices and register each one if it has not already been registered
-    for (const device of exampleDevices) {
+    // loop over the discovered devices a nd register each one if it has not already been registered
+    for (const device of this.config.devices) {
 
       // generate a unique id for the accessory this should be generated from
       // something globally unique, but constant, for example, the device serial
       // number or MAC address
-      const uuid = this.api.hap.uuid.generate(device.exampleUniqueId);
+      const uuid = this.api.hap.uuid.generate(device.deviceId);
 
       // check that the device has not already been registered by checking the
       // cached devices we stored in the `configureAccessory` method above
       if (!this.accessories.find(accessory => accessory.UUID === uuid)) {
-        this.log.info('Registering new accessory:', device.exampleDisplayName);
+        this.log.info('Registering new accessory:', device.deviceName);
 
         // create a new accessory
-        const accessory = new this.api.platformAccessory(device.exampleDisplayName, uuid);
+        const accessory = new this.api.platformAccessory(device.deviceName, uuid);
 
         // store a copy of the device object in the `accessory.context`
         // the `context` property can be used to store any data about the accessory you may need
@@ -92,7 +88,7 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler
         // this is imported from `platformAccessory.ts`
-        new ExamplePlatformAccessory(this, accessory);
+        new ADTPlatformAccessory(this, accessory);
 
         // link the accessory to your platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);

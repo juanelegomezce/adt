@@ -14,21 +14,27 @@
       "api-key": {
         "title": "api-key",
         "description": "panel name",
-        "type": "string"
+        "type": "string",
+        "required": true
       },
       "devices": {
         "title": "Devices",
         "type": "array",
         "required": true,
         "items": {
-          "deviceName": {
-            "title": "Device Name",
-            "type": "string"
-          },
-          "deviceid": {
-            "title": "Device ID",
-            "type": "string"
-          }
+            "type": "object",
+            "properties": {
+              "deviceName": {
+                "title": "Device Name",
+                "type": "string",
+                "required": true
+              },
+              "deviceid": {
+                "title": "Device ID",
+                "type": "string",
+                "required": true
+              }
+            }
         }
       }
     }

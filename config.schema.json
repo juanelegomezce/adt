@@ -9,7 +9,24 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "ADT Panel"
+      },
+      "devices": {
+        "title": "Devices",
+        "type": "array",
+        "required": true,
+        "items": {
+          "name": {
+            "title": "name",
+            "description": "panel name",
+            "type": "string"
+          },
+          "api-key": {
+            "title": "api-key",
+            "description": "panel name",
+            "type": "string"
+          }
+        }
       }
     }
   }

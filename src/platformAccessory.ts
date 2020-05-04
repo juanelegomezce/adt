@@ -46,7 +46,7 @@ export class ADTPlatformAccessory {
         "123-456-789",
       );
 
-    this.platform.log.debug("context", this.accessory.context);
+    this.platform.log.debug("context", this.accessory.context.device);
 
     // get the SecuritySystem service if it exists, otherwise create a new SecuritySystem service
     // you can create multiple services for each accessory
@@ -82,7 +82,7 @@ export class ADTPlatformAccessory {
       baseURL: "https://api.smartthings.com/v1/",
       responseType: "json",
       headers: {
-        Authorization: `Bearer ${accessory.context.apiKey}`,
+        Authorization: `Bearer ${accessory.context.device.apiKey}`,
       },
     });
   }
@@ -93,7 +93,7 @@ export class ADTPlatformAccessory {
    */
   setState(value: CharacteristicValue, callback: CharacteristicSetCallback) {
     
-    const sceneId = this.accessory.context[
+    const sceneId = this.accessory.context.device[
       this.statusMapping[parseInt(value.toString())]
     ];
 
@@ -129,7 +129,7 @@ export class ADTPlatformAccessory {
     this.platform.log.debug("getState");
     this.apiClient
       .get(
-        `devices/${this.accessory.context.deviceId}/components/main/capabilities/securitySystem/status`,
+        `devices/${this.accessory.context.device.deviceId}/components/main/capabilities/securitySystem/status`,
       )
       .then((result) => {
         this.platform.log.debug("Call result", result);

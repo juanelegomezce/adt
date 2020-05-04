@@ -46,6 +46,8 @@ export class ADTPlatformAccessory {
         "123-456-789",
       );
 
+    this.platform.log.debug("context", this.accessory.context);
+
     // get the SecuritySystem service if it exists, otherwise create a new SecuritySystem service
     // you can create multiple services for each accessory
     this.service =

@@ -90,19 +90,22 @@ export class ADTPlatformAccessory {
    * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
    */
   setState(value: CharacteristicValue, callback: CharacteristicSetCallback) {
-    // implement your own code to turn your device on/off
-    this.platform.log.debug("Set Characteristic On ->", value);
-
+    
     const sceneId = this.accessory.context[
       this.statusMapping[parseInt(value.toString())]
     ];
 
+    this.platform.log.debug("Set Scene ->", sceneId);
+    
+
     this.apiClient
       .post(`scenes/${sceneId}/execute)`)
-      .then(() => {
+      .then((result) => {
+        this.platform.log.debug("Call result", result);
         callback(null, value);
       })
       .catch((error) => {
+        this.platform.log.debug("Call result error", error);
         callback(error);
       });
   }
@@ -121,14 +124,17 @@ export class ADTPlatformAccessory {
    * this.service.updateCharacteristic(this.platform.Characteristic.On, true)
    */
   getState(callback: CharacteristicGetCallback) {
+    this.platform.log.debug("getState");
     this.apiClient
       .get(
         `devices/${this.accessory.context.deviceId}/components/main/capabilities/securitySystem/status`,
       )
       .then((result) => {
+        this.platform.log.debug("Call result", result);
         callback(null, this.armedMapping[result.data.securitySystemStatus.value]);
       })
       .catch((err) => {
+        this.platform.log.debug("Call result error", err);
         callback(err);
       });
   }

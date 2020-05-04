@@ -101,7 +101,7 @@ export class ADTPlatformAccessory {
     
 
     this.apiClient
-      .post(`scenes/${sceneId}/execute)`)
+      .post(`scenes/${sceneId}/execute`)
       .then((result) => {
         this.platform.log.debug("Call result", result);
         callback(null, value);

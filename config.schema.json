@@ -11,46 +11,37 @@
         "required": true,
         "default": "ADT Panel"
       },
+      "deviceName": {
+        "title": "Device Name",
+        "type": "string",
+        "required": true,
+        "default": "ADT Panel"
+      },
+      "deviceId": {
+        "type": "string",
+        "title": "Device ID",
+        "required": true
+      },
       "apiKey": {
         "title": "API KEY",
         "description": "panel name",
         "type": "string",
         "required": true
       },
-      "devices": {
-        "title": "Devices",
-        "type": "array",
-        "required": true,
-        "items": {
-          "type": "object",
-          "properties": {
-            "deviceName": {
-              "type": "string",
-              "title": "Device Name",
-              "required": true
-            },
-            "deviceId": {
-              "type": "string",
-              "title": "Device ID",
-              "required": true
-            },
-            "homeScene": {
-              "title": "Home Scene ID",
-              "type": "string",
-              "required": true
-            },
-            "awayScene": {
-              "title": "Away Scene ID",
-              "type": "string",
-              "required": true
-            },
-            "nightScene": {
-              "title": "Night Scene ID",
-              "type": "string",
-              "required": true
-            }
-          }
-        }
+      "homeScene": {
+        "title": "Home Scene ID",
+        "type": "string",
+        "required": true
+      },
+      "awayScene": {
+        "title": "Away Scene ID",
+        "type": "string",
+        "required": true
+      },
+      "nightScene": {
+        "title": "Night Scene ID",
+        "type": "string",
+        "required": true
       }
     }
   }

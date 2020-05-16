@@ -1,8 +1,7 @@
 import { CharacteristicEventTypes } from "homebridge";
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 
 import type {
-  Service,
   PlatformAccessory,
   CharacteristicValue,
   CharacteristicSetCallback,
@@ -10,21 +9,9 @@ import type {
 } from "homebridge";
 
 import { ADTHomebridgePlatform } from "./platform";
+import { ADTPlatformAccessory } from "./adt-platform-accessory";
 
-/**
- * Platform Accessory
- * An instance of this class is created for each accessory your platform registers
- * Each accessory may expose multiple services of different service types.
- */
-export class ADTPlatformAccessory {
-  private service: Service;
-  private apiClient: AxiosInstance;
-  private statusMapping: string[] = [
-    "homeScene",
-    "awayScene",
-    "nightScene",
-    "homeScene",
-  ];
+export class ADTSecuritySystem extends ADTPlatformAccessory {
 
   private armedMapping: Record<string, number> = {
     "armedStay": 2,
@@ -33,10 +20,12 @@ export class ADTPlatformAccessory {
   };
 
   constructor(
-    private readonly platform: ADTHomebridgePlatform,
-    private readonly accessory: PlatformAccessory,
+    platform: ADTHomebridgePlatform,
+    accessory: PlatformAccessory,
+    apiClient: AxiosInstance,
   ) {
-    // set accessory information
+    super(platform, accessory, apiClient);
+
     this.accessory
       .getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, "Samsgung")
@@ -48,27 +37,15 @@ export class ADTPlatformAccessory {
 
     this.platform.log.debug("context", this.accessory.context.device);
 
-    // get the SecuritySystem service if it exists, otherwise create a new SecuritySystem service
-    // you can create multiple services for each accessory
     this.service =
       this.accessory.getService(this.platform.Service.SecuritySystem) ??
       this.accessory.addService(this.platform.Service.SecuritySystem);
 
-    // To avoid "Cannot add a Service with the same UUID another Service without also defining a unique 'subtype' property." error,
-    // when creating multiple services of the same type, you need to use the following syntax to specify a name and subtype id:
-    // this.accessory.getService('NAME') ?? this.accessory.addService(this.platform.Service.Lightbulb, 'NAME', 'USER_DEFINED_SUBTYPE');
-
-    // set the service name, this is what is displayed as the default name on the Home app
-    // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
     this.service.setCharacteristic(
       this.platform.Characteristic.Name,
       accessory.context.device.exampleDisplayName,
     );
 
-    // each service must implement at-minimum the "required characteristics" for the given service type
-    // see https://github.com/homebridge/HAP-NodeJS/blob/master/src/lib/gen/HomeKit.ts
-
-    // register handlers for the On/Off Characteristic
     this.service
       .getCharacteristic(
         this.platform.Characteristic.SecuritySystemCurrentState,
@@ -77,20 +54,8 @@ export class ADTPlatformAccessory {
     this.service
       .getCharacteristic(this.platform.Characteristic.SecuritySystemTargetState)
       .on(CharacteristicEventTypes.SET, this.setState.bind(this));
-
-    this.apiClient = axios.create({
-      baseURL: "https://api.smartthings.com/v1/",
-      responseType: "json",
-      headers: {
-        Authorization: `Bearer ${accessory.context.device.apiKey}`,
-      },
-    });
   }
 
-  /**
-   * Handle "SET" requests from HomeKit
-   * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
-   */
   setState(value: CharacteristicValue, callback: CharacteristicSetCallback) {
     
     const sceneId = this.accessory.context.device[

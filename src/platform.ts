@@ -2,7 +2,7 @@ import { APIEvent } from 'homebridge';
 import type { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ADTPlatformAccessory } from './platformAccessory';
+import { ADTPlatformAccessory, ADTSecuritySystem } from './platformAccessory';
 
 /**
  * HomebridgePlatform
@@ -12,6 +12,11 @@ import { ADTPlatformAccessory } from './platformAccessory';
 export class ADTHomebridgePlatform implements DynamicPlatformPlugin {
   public readonly Service = this.api.hap.Service;
   public readonly Characteristic = this.api.hap.Characteristic;
+  private const deviceMapping = {
+    "2e24162e-a854-41f8-9c2b-60c9913a2bfd": ADTPlatformAccessory,
+    "a95cda96-221b-4be5-aed7-6202fdde7f50": ADTSecuritySystem,
+    "a89b9fe8-2896-4abf-9c23-df8d3b4f6f89": ADTPlatformAccessory,
+  }
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
@@ -30,7 +35,7 @@ export class ADTHomebridgePlatform implements DynamicPlatformPlugin {
     this.api.on(APIEvent.DID_FINISH_LAUNCHING, () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
-      this.setupDevice();
+      this.loadDevices();
     });
   }
 
@@ -39,14 +44,7 @@ export class ADTHomebridgePlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(accessory: PlatformAccessory) {
-    this.log.info('Restoring accessory from cache:', accessory.displayName);
-
-    // create the accessory handler
-    // this is imported from `platformAccessory.ts`
-    new ADTPlatformAccessory(this, accessory);
-
-    // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+    
   }
 
   /**
@@ -54,7 +52,7 @@ export class ADTHomebridgePlatform implements DynamicPlatformPlugin {
    * Accessories must only be registered once, previously created accessories
    * must not be registered again to prevent "duplicate UUID" errors.
    */
-  setupDevice() {
+  loadDevices() {
 
     // generate a unique id for the accessory this should be generated from
     // something globally unique, but constant, for example, the device serial
@@ -76,6 +74,7 @@ export class ADTHomebridgePlatform implements DynamicPlatformPlugin {
       // create the accessory handler
       // this is imported from `platformAccessory.ts`
       new ADTPlatformAccessory(this, accessory);
+      const prueba = new this.deviceMapping["2e24162e-a854-41f8-9c2b-60c9913a2bfd"](this, accessory);
 
       // link the accessory to your platform
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
